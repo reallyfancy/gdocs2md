@@ -3,20 +3,20 @@ gdocs2md
 
 A simple Google Apps script to convert a properly formatted Google Drive Document to the markdown (.md) format. This is a customised version to suit my workflow, based on [the original by Renato Mangini](https://github.com/mangini/gdocs2md).
 
-## Usage
+## How to use
 
-  * Adding this script to your doc (once per doc):
+  * Adding this script to your document:
     * Open your Google Drive document (http://drive.google.com)
     * Tools > Script editor
     * Clear the default empty function and paste the contents of [converttomarkdown.gapps](https://github.com/reallyfancy/gdocs2md/blob/master/converttomarkdown.gapps) into the code editor
     * Save
     
-  * Running the script (run as many times as you want):
+  * Running the script:
     - Tools > Script editor
-    - Select "ConvertToMarkdown" function.
+    - Select "ConvertToMarkdown" function
     - Click Run button
     - If this is the first time you've run this script, authorise it when prompted
-    - Converted doc with images attached will be emailed to you. Subject will be "[MARKDOWN_MAKER]...".
+    - Converted doc with images attached will be emailed to you
 
 
 ## Interpreted formats
