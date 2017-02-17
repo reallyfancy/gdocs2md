@@ -23,10 +23,7 @@ function ConvertToMarkdown() {
   var text = "";
   var inSrc = false;
   var globalImageCounter = 0;
-  var globalListCounters = {};
-  // edbacher: added a variable for indent in src <pre> block. Let style sheet do margin.
-  var srcIndent = "";
-  
+  var globalListCounters = {}; 
   var attachments = [];
   
   // Walk through all the child elements of the doc.
@@ -42,7 +39,7 @@ function ConvertToMarkdown() {
         inSrc=false;
         text+="</pre>\n\n";
       } else if (inSrc) {
-        text+=(srcIndent+escapeHTML(result.text)+"\n");
+        text+=(escapeHTML(result.text)+"\n");
       } else if (result.text && result.text.length>0) {
         text+=result.text+"\n\n";
       }
