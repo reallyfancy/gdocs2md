@@ -257,7 +257,7 @@ function processTextElement(inSrc, txt) {
     var font=txt.getFontFamily(off);
     
     // strip trailing space on formatted text
-    if (pOut.charAt(lastOff == " "))
+    if (pOut.charAt(lastOff-1) == " ")
     {
       lastOff -= 1; 
     }
