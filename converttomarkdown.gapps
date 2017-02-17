@@ -95,10 +95,6 @@ function processParagraph(index, element, inSrc, imageCounter, listCounters) {
   if (element.getNumChildren()==0) {
     return null;
   }  
-  // Punt on TOC.
-  if (element.getType() === DocumentApp.ElementType.TABLE_OF_CONTENTS) {
-    return {"text": "[[TOC]]"};
-  }
   
   // Set up for real results.
   var result = {};
@@ -264,6 +260,7 @@ function processTextElement(inSrc, txt) {
     var url=txt.getLinkUrl(off);
     var font=txt.getFontFamily(off);
     
+    // strip trailing space on formatted text
     if (pOut.charAt(lastOff == " "))
     {
       lastOff -= 1; 
