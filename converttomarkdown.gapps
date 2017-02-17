@@ -22,7 +22,6 @@ function ConvertToMarkdown() {
   var numChildren = DocumentApp.getActiveDocument().getActiveSection().getNumChildren();
   var text = "";
   var inSrc = false;
-  var inClass = false;
   var globalImageCounter = 0;
   var globalListCounters = {};
   // edbacher: added a variable for indent in src <pre> block. Let style sheet do margin.
@@ -36,26 +35,12 @@ function ConvertToMarkdown() {
     var result = processParagraph(i, child, inSrc, globalImageCounter, globalListCounters);
     globalImageCounter += (result && result.images) ? result.images.length : 0;
     if (result!==null) {
-      if (result.sourcePretty==="start" && !inSrc) {
-        inSrc=true;
-        text+="<pre class=\"prettyprint\">\n";
-      } else if (result.sourcePretty==="end" && inSrc) {
-        inSrc=false;
-        text+="</pre>\n\n";
-      } else if (result.source==="start" && !inSrc) {
+      if (result.source==="start" && !inSrc) {
         inSrc=true;
         text+="<pre>\n";
       } else if (result.source==="end" && inSrc) {
         inSrc=false;
         text+="</pre>\n\n";
-      } else if (result.inClass==="start" && !inClass) {
-        inClass=true;
-        text+="<div class=\""+result.className+"\">\n";
-      } else if (result.inClass==="end" && inClass) {
-        inClass=false;
-        text+="</div>\n\n";
-      } else if (inClass) {
-        text+=result.text+"\n\n";
       } else if (inSrc) {
         text+=(srcIndent+escapeHTML(result.text)+"\n");
       } else if (result.text && result.text.length>0) {
@@ -168,17 +153,10 @@ function processParagraph(index, element, inSrc, imageCounter, listCounters) {
   
   // evb: Add source pretty too. (And abbreviations: src and srcp.)
   // process source code block:
-  if (/^\s*---\s+srcp\s*$/.test(pOut) || /^\s*---\s+source pretty\s*$/.test(pOut)) {
-    result.sourcePretty = "start";
-  } else if (/^\s*---\s+src\s*$/.test(pOut) || /^\s*---\s+source code\s*$/.test(pOut)) {
+  if (/^\s*---\s+src\s*$/.test(pOut) || /^\s*---\s+source code\s*$/.test(pOut)) {
     result.source = "start";
-  } else if (/^\s*---\s+class\s+([^ ]+)\s*$/.test(pOut)) {
-    result.inClass = "start";
-    result.className = RegExp.$1;
   } else if (/^\s*---\s*$/.test(pOut)) {
     result.source = "end";
-    result.sourcePretty = "end";
-    result.inClass = "end";
   } else {
 
     prefix = findPrefix(inSrc, element, listCounters);
@@ -254,7 +232,6 @@ function processTextElement(inSrc, txt) {
   for (var i=attrs.length-1; i>=0; i--) {
     var off=attrs[i];
     var url=txt.getLinkUrl(off);
-    var font=txt.getFontFamily(off);
     
     // strip trailing space on formatted text
     if (pOut.charAt(lastOff-1) == " ")
@@ -272,16 +249,8 @@ function processTextElement(inSrc, txt) {
       var added = ']('+url+')';
       pOut=pOut.substring(0, off)+'['+pOut.substring(off, lastOff)+added+pOut.substring(lastOff);
       lastOff += added.length +1;
-    } else if (font) {
-      if (!inSrc && font===font.COURIER_NEW) {
-        while (i>=1 && txt.getFontFamily(attrs[i-1]) && txt.getFontFamily(attrs[i-1])===font.COURIER_NEW) {
-          // detect fonts that are in multiple pieces because of errors on formatting:
-          i-=1;
-          off=attrs[i];
-        }
-        pOut=pOut.substring(0, off)+'`'+pOut.substring(off, lastOff)+'`'+pOut.substring(lastOff);
-      }
     }
+
     if (txt.isBold(off)) {
       var d1 = d2 = "**";
       if (txt.isItalic(off)) {
