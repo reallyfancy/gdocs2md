@@ -61,12 +61,11 @@ function ConvertToMarkdown() {
       
   }
   
-  attachments.push({"fileName":DocumentApp.getActiveDocument().getName()+".md", "mimeType": "text/plain", "content": text});
+  attachments.push({"fileName":DocumentApp.getActiveDocument().getName().split(' ').join('_').toLowerCase()+".md", "mimeType": "text/plain", "content": text});
   
   MailApp.sendEmail(Session.getActiveUser().getEmail(), 
                     "[MARKDOWN_MAKER] "+DocumentApp.getActiveDocument().getName(), 
-                    "Your converted markdown document is attached (converted from "+DocumentApp.getActiveDocument().getUrl()+")"+
-                    "\n\nDon't know how to use the format options? See http://github.com/mangini/gdocs2md\n",
+                    "Your converted markdown document is attached (converted from "+DocumentApp.getActiveDocument().getUrl()+")",
                     { "attachments": attachments });
 }
 
@@ -85,7 +84,7 @@ function processParagraph(index, element, inSrc, imageCounter, listCounters) {
   var result = {};
   var pOut = "";
   var textElements = [];
-  var imagePrefix = "image_";
+  var imagePrefix = DocumentApp.getActiveDocument().getName().split(' ').join('_').toLowerCase();
   
   // Handle Table elements. Pretty simple-minded now, but works for simple tables.
   // Note that Markdown does not process within block-level HTML, so it probably 
@@ -127,9 +126,9 @@ function processParagraph(index, element, inSrc, imageCounter, listCounters) {
       } else {
         throw "Unsupported image type: "+contentType;
       }
-      var name = imagePrefix + imageCounter + extension;
+      var name = imagePrefix + '_' + imageCounter + extension;
       imageCounter++;
-      textElements.push('![image alt text]('+name+')');      
+      textElements.push('![](public://'+name+')');      
       result.images.push( {
         "bytes": element.getChild(i).getBlob().getBytes(), 
         "type": contentType, 
@@ -151,7 +150,6 @@ function processParagraph(index, element, inSrc, imageCounter, listCounters) {
     return result;
   }
   
-  // evb: Add source pretty too. (And abbreviations: src and srcp.)
   // process source code block:
   if (/^\s*---\s+src\s*$/.test(pOut) || /^\s*---\s+source code\s*$/.test(pOut)) {
     result.source = "start";
