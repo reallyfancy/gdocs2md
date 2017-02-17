@@ -1,13 +1,21 @@
 /*
-Usage: 
-  Adding this script to your doc: 
-    - Tools > Script Manager > New
-    - Select "Blank Project", then paste this code in and save.
-  Running the script:
-    - Tools > Script Manager
-    - Select "ConvertToMarkdown" function.
-    - Click Run button.
-    - Converted doc will be mailed to you. Subject will be "[MARKDOWN_MAKER]...".
+Copyright 2013 Google Inc. All Rights Reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+
+Modified by Kerry Turner: http://github.com/reallyfancy/gdocs2md
+Original by Renato Mangini: https://github.com/mangini/gdocs2md
 */
 
 function ConvertToMarkdown() {
@@ -140,7 +148,7 @@ function processParagraph(index, element, inSrc, imageCounter, listCounters) {
       }
       var name = imagePrefix + imageCounter + extension;
       imageCounter++;
-      textElements.push('![image alt text]('+name+')');
+      textElements.push('![image alt text]('+name+')');      
       result.images.push( {
         "bytes": element.getChild(i).getBlob().getBytes(), 
         "type": contentType, 
@@ -255,6 +263,12 @@ function processTextElement(inSrc, txt) {
     var off=attrs[i];
     var url=txt.getLinkUrl(off);
     var font=txt.getFontFamily(off);
+    
+    if (pOut.charAt(lastOff == " "))
+    {
+      lastOff -= 1; 
+    }
+    
     if (url) {  // start of link
       if (i>=1 && attrs[i-1]==off-1 && txt.getLinkUrl(attrs[i-1])===url) {
         // detect links that are in multiple pieces because of errors on formatting:
@@ -262,7 +276,9 @@ function processTextElement(inSrc, txt) {
         off=attrs[i];
         url=txt.getLinkUrl(off);
       }
-      pOut=pOut.substring(0, off)+'['+pOut.substring(off, lastOff)+']('+url+')'+pOut.substring(lastOff);
+      var added = ']('+url+')';
+      pOut=pOut.substring(0, off)+'['+pOut.substring(off, lastOff)+added+pOut.substring(lastOff);
+      lastOff += added.length +1;
     } else if (font) {
       if (!inSrc && font===font.COURIER_NEW) {
         while (i>=1 && txt.getFontFamily(attrs[i-1]) && txt.getFontFamily(attrs[i-1])===font.COURIER_NEW) {
