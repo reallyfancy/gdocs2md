@@ -58,7 +58,7 @@ function ConvertToMarkdown() {
       
   }
   
-  attachments.push({"fileName":DocumentApp.getActiveDocument().getName().split(' ').join('_').toLowerCase()+".md", "mimeType": "text/plain", "content": text});
+  attachments.push({"fileName":DocumentApp.getActiveDocument().getName().split(' ').join('-').toLowerCase()+".md", "mimeType": "text/plain", "content": text});
   
   MailApp.sendEmail(Session.getActiveUser().getEmail(), 
                     "[MARKDOWN_MAKER] "+DocumentApp.getActiveDocument().getName(), 
@@ -81,7 +81,7 @@ function processParagraph(index, element, inSrc, imageCounter, listCounters) {
   var result = {};
   var pOut = "";
   var textElements = [];
-  var imagePrefix = DocumentApp.getActiveDocument().getName().split(' ').join('_').toLowerCase();
+  var imagePrefix = DocumentApp.getActiveDocument().getName().split(' ').join('-').toLowerCase();
   
   // Handle Table elements. Pretty simple-minded now, but works for simple tables.
   // Note that Markdown does not process within block-level HTML, so it probably 
