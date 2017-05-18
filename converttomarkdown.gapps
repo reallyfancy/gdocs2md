@@ -123,9 +123,9 @@ function processParagraph(index, element, inSrc, imageCounter, listCounters) {
       } else {
         throw "Unsupported image type: "+contentType;
       }
-      var name = imagePrefix + '_' + imageCounter + extension;
+      var name = imagePrefix + '-' + imageCounter + extension;
       imageCounter++;
-      textElements.push('![](public://'+name+')');      
+      textElements.push('![](public://learn/'+name+')');      
       result.images.push( {
         "bytes": element.getChild(i).getBlob().getBytes(), 
         "type": contentType, 
